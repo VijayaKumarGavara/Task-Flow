@@ -17,6 +17,13 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
+    devDependencies:
+      '@parcel/config-default':
+        specifier: ^2.16.0
+        version: 2.16.0(@parcel/core@2.16.0(@swc/helpers@0.5.17))(@swc/helpers@0.5.17)
+      '@parcel/transformer-image':
+        specifier: ^2.16.0
+        version: 2.16.0(@parcel/core@2.16.0(@swc/helpers@0.5.17))
 
 packages:
 

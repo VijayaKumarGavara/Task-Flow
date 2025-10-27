@@ -20,5 +20,9 @@
     "parcel": "^2.16.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@parcel/config-default": "^2.16.0",
+    "@parcel/transformer-image": "^2.16.0"
   }
 }
