@@ -1,5 +1,5 @@
 // React built in Components
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 // Utility Functions
 import isOverlap from "../utils/isOverLap";
@@ -9,9 +9,10 @@ import sortTasks from "../utils/sortTasks";
 import PlanningForm from "./PlanningForm";
 import OverlapModel from "./OverLapmodel";
 import TaskCard from "./TaskCard";
-const Planning = ({ taskList, setTaskList }) => {
+import TasksContext from "../utils/temp";
+const Planning = () => {
   const [isFormOpen, setFormOpen] = useState(false);
-  // const [taskList, setTaskList] = useState([]);
+  const {taskList, setTaskList} = useContext(TasksContext);
   // const [sortedTasks, setSortedTasks] = useState([]);
   const sortedTasks = sortTasks(taskList);
 

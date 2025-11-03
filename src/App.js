@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
-// App.js
+
+import TasksContext from "./utils/temp";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -11,22 +12,24 @@ import Planning from "./pages/Planning";
 import Tasks from "./pages/Tasks";
 import History from "./pages/History";
 function AppTemplate() {
+  const [taskList, setTaskList] = useState([]);
   return (
     <>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex grow">
-          <Outlet />
-        </main>
+      <TasksContext.Provider value={{ taskList, setTaskList }}>
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex grow">
+            <Outlet />
+          </main>
 
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </TasksContext.Provider>
     </>
   );
 }
 
 export default function App() {
-  const [taskList, setTaskList] = useState([]);
   const appRouter = createBrowserRouter([
     {
       path: "/",
@@ -39,7 +42,7 @@ export default function App() {
         },
         {
           path: "/planning",
-          element: <Planning taskList={taskList} setTaskList={setTaskList} />,
+          element: <Planning/>,
         },
         {
           path: "/Tasks",
