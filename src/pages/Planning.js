@@ -14,23 +14,25 @@ const Planning = () => {
   const [isFormOpen, setFormOpen] = useState(false);
   const {taskList, setTaskList} = useContext(TasksContext);
   // const [sortedTasks, setSortedTasks] = useState([]);
-  const sortedTasks = sortTasks(taskList);
+  let sortedTasks = sortTasks(taskList);
 
   const [showOverlapModal, setShowOverlapModal] = useState(false);
   const [overlapData, setOverlapData] = useState([]);
 
   const [editableTask, setEditableTask] = useState(null);
 
+  // To Close PlanningForm
   function handleCanel() {
     setFormOpen(false);
   }
 
+
+  // Edit & Delete Options of Each Task Card
   function handleEdit(task) {
     setEditableTask(task);
     setFormOpen(true);
     // console.log(task);
   }
-
   function handleDelete(task) {
     const updated = taskList.filter((t) => t != task);
     setTaskList(updated);
@@ -42,7 +44,7 @@ const Planning = () => {
       // Editing mode: replace old task
       const updated = taskList.map((t) => (t === editableTask ? newTask : t));
       setTaskList(updated);
-      // setSortedTasks(sortTasks(updated));
+      sortedTasks=sortTasks(updated);
       setEditableTask(null);
       setFormOpen(false);
       return;
@@ -53,7 +55,7 @@ const Planning = () => {
     } else {
       const updated = [...taskList, newTask];
       setTaskList(updated);
-      // setSortedTasks(sortTasks(updated));
+      sortedTasks=sortTasks(updated);
       console.log("New Task Added: ", newTask);
     }
     // setFormOpen(false);
@@ -120,7 +122,7 @@ const Planning = () => {
           onKeep={() => {
             const updatedTasks = [...taskList, overlapData[0]];
             setTaskList(updatedTasks);
-            setSortedTasks(sortTasks(updatedTasks));
+            sortedTasks=sortTasks(updatedTasks);
             setShowOverlapModal(false);
           }}
           onEdit={() => {
