@@ -5,6 +5,7 @@ export default function isOverlap(newTask, taskList) {
   let newEnd = timeToMinutes(newTask.endTime);
   for (let t of taskList) {
     if (
+      newTask.taskId !== t.taskId &&
       newTask.date === t.date &&
       newStart < timeToMinutes(t.endTime) &&
       newEnd > timeToMinutes(t.startTime)

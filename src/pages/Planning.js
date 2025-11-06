@@ -1,5 +1,5 @@
 // React built in Components
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 
 // Utility Functions
 import isOverlap from "../utils/isOverLap";
@@ -7,13 +7,29 @@ import sortTasks from "../utils/sortTasks";
 
 // Components
 import PlanningForm from "./PlanningForm";
-import OverlapModel from "./OverLapmodel";
+import OverlapModel from "./Overlapmodel";
 import TaskCard from "./TaskCard";
 import TasksContext from "../utils/temp";
 const Planning = () => {
   const [isFormOpen, setFormOpen] = useState(false);
-  const {taskList, setTaskList} = useContext(TasksContext);
+  const { taskList, setTaskList } = useContext(TasksContext);
   // const [sortedTasks, setSortedTasks] = useState([]);
+  useEffect(() => {
+    fetchTodayPlannedTasks();
+  }, []);
+  async function fetchTodayPlannedTasks() {
+    const today = new Date().toISOString().split("T")[0];
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/tasks/?createdToday=true`
+      );
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+      const jsonData = await response.json();
+      setTaskList(jsonData);
+    } catch (err) {
+      console.log("Error while fetching the data: ", err.message);
+    }
+  }
   let sortedTasks = sortTasks(taskList);
 
   const [showOverlapModal, setShowOverlapModal] = useState(false);
@@ -22,10 +38,9 @@ const Planning = () => {
   const [editableTask, setEditableTask] = useState(null);
 
   // To Close PlanningForm
-  function handleCanel() {
+  function handleCancel() {
     setFormOpen(false);
   }
-
 
   // Edit & Delete Options of Each Task Card
   function handleEdit(task) {
@@ -33,32 +48,84 @@ const Planning = () => {
     setFormOpen(true);
     // console.log(task);
   }
-  function handleDelete(task) {
-    const updated = taskList.filter((t) => t.taskId != task.taskId);
-    setTaskList(updated);
+  async function handleDelete(task) {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/tasks/${task.taskId}`,
+        { method: "DELETE" }
+      );
+      if (response.ok) {
+        const updated = taskList.filter((t) => t.taskId != task.taskId);
+        setTaskList(updated);
+        // console.log("Task deleted successfully");
+      } else {
+        // console.log("Failed to delete task:", await await response.json());
+      }
+    } catch (error) {
+      console.log("Error deleting task:", error);
+    }
     // setSortedTasks(sortTasks(updated));
   }
-  function handleSubmit(newTask) {
+  async function handleSubmit(newTask) {
+    
     const overlapTasks = isOverlap(newTask, taskList);
-    if (editableTask) {
-      // Editing mode: replace old task
-      const updated = taskList.map((t) => (t.taskId === editableTask.taskId ? newTask : t));
-      setTaskList(updated);
-      // sortedTasks=sortTasks(updated);
-      setEditableTask(null);
-      setFormOpen(false);
-      return;
-    }
+
     if (overlapTasks.length > 0) {
       setOverlapData([newTask, ...overlapTasks]);
       setShowOverlapModal(true);
-    } else {
-      const updated = [...taskList, newTask];
-      setTaskList(updated);
-      // sortedTasks=sortTasks(updated);
-      console.log("New Task Added: ", newTask);
+      return;
+    } 
+    if (editableTask) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/tasks/${editableTask.taskId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newTask),
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to update the task");
+
+        const updatedTask = await response.json();
+
+        // Update in UI
+        const updatedList = taskList.map((t) =>
+          t.taskId === editableTask.taskId ? updatedTask : t
+        );
+
+        setTaskList(updatedList);
+        setEditableTask(null);
+        setFormOpen(false);
+
+        // console.log("✅ Task updated successfully");
+        return;
+      } catch (error) {
+        console.log("Error while updating task:", error.message);
+        return;
+      }
     }
-    // setFormOpen(false);
+    else {
+      try {
+        const response = await fetch("http://localhost:5000/api/tasks", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newTask),
+        });
+        if (!response.ok) throw new Error("Failed to add the task");
+        const savedTask = await response.json();
+
+        setTaskList([...taskList, savedTask]);
+        // console.log("New Task Added: ", newTask);
+      } catch (error) {
+        console.log("Error while adding task:", error.message);
+      }
+    }
   }
 
   if (taskList.length === 0 && !isFormOpen) {
@@ -110,7 +177,7 @@ const Planning = () => {
     <>
       <div className="w-full h-11/12 max-h-screen mt-24 text-center">
         <PlanningForm
-          onCancel={handleCanel}
+          onCancel={handleCancel}
           handleSubmit={handleSubmit}
           editableTask={editableTask}
         />
@@ -119,9 +186,25 @@ const Planning = () => {
         <OverlapModel
           data={overlapData}
           onClose={() => setShowOverlapModal(false)}
-          onKeep={() => {
-            const updatedTasks = [...taskList, overlapData[0]];
-            setTaskList(updatedTasks);
+          onKeep={async () => {
+            try {
+              const response = await fetch("http://localhost:5000/api/tasks", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(overlapData[0]),
+              });
+              if (!response.ok) throw new Error("Failed to add the task");
+              const savedTask = await response.json();
+
+              setTaskList([...taskList, savedTask]);
+              //console.log("New Task Added: ", newTask);
+            } catch (error) {
+              console.log("Error while adding task:", error.message);
+            }
+            //const updatedTasks = [...taskList, overlapData[0]];
+            //setTaskList(updatedTasks);
             // sortedTasks=sortTasks(updatedTasks);
             setShowOverlapModal(false);
           }}
