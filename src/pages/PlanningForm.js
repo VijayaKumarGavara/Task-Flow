@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import generateId from "../utils/generateId";
+
 import timings from "../utils/timingValues";
 import timeToMinutes from "../utils/timeToMinutes";
 
@@ -9,6 +11,7 @@ export default function PlanningForm(props) {
   const defaultDate = today.toISOString().split("T")[0];
   const [task, setTask] = useState(
     props.editableTask || {
+      taskId:generateId(),
       title: "",
       description: "",
       priority: "High",
@@ -33,6 +36,7 @@ export default function PlanningForm(props) {
     }
     props.handleSubmit(task);
     setTask({
+      taskId:generateId(),
       title: "",
       description: "",
       priority: "High",

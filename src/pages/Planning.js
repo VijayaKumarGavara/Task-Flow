@@ -34,7 +34,7 @@ const Planning = () => {
     // console.log(task);
   }
   function handleDelete(task) {
-    const updated = taskList.filter((t) => t != task);
+    const updated = taskList.filter((t) => t.taskId != task.taskId);
     setTaskList(updated);
     // setSortedTasks(sortTasks(updated));
   }
@@ -42,9 +42,9 @@ const Planning = () => {
     const overlapTasks = isOverlap(newTask, taskList);
     if (editableTask) {
       // Editing mode: replace old task
-      const updated = taskList.map((t) => (t === editableTask ? newTask : t));
+      const updated = taskList.map((t) => (t.taskId === editableTask.taskId ? newTask : t));
       setTaskList(updated);
-      sortedTasks=sortTasks(updated);
+      // sortedTasks=sortTasks(updated);
       setEditableTask(null);
       setFormOpen(false);
       return;
@@ -55,7 +55,7 @@ const Planning = () => {
     } else {
       const updated = [...taskList, newTask];
       setTaskList(updated);
-      sortedTasks=sortTasks(updated);
+      // sortedTasks=sortTasks(updated);
       console.log("New Task Added: ", newTask);
     }
     // setFormOpen(false);
@@ -122,7 +122,7 @@ const Planning = () => {
           onKeep={() => {
             const updatedTasks = [...taskList, overlapData[0]];
             setTaskList(updatedTasks);
-            sortedTasks=sortTasks(updatedTasks);
+            // sortedTasks=sortTasks(updatedTasks);
             setShowOverlapModal(false);
           }}
           onEdit={() => {
