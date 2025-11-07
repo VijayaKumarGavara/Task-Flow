@@ -27,21 +27,21 @@ export default function Header() {
             </Link>
             <Link
               className="p-2 text-blue-500 text-2xl font-bold hover:border-transparent hover:bg-blue-500 hover:text-white hover:rounded-lg"
-              to="/planning"
+              to="/plan"
             >
-              Planning
+              Plan
             </Link>
             <Link
               className="p-2 text-blue-500 text-2xl font-bold hover:border-transparent hover:bg-blue-500 hover:text-white hover:rounded-lg"
-              to="/tasks"
+              to="/track"
             >
-              Tasks
+              Track
             </Link>
             <Link
               className="p-2 text-blue-500 text-2xl font-bold hover:border-transparent hover:bg-blue-500 hover:text-white hover:rounded-lg"
-              to="/history"
+              to="/insights"
             >
-              History
+              Insights
             </Link>
           </div>
         </div>

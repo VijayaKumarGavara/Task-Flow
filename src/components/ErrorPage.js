@@ -1,8 +1,12 @@
-import React from 'react'
+import { useRouteError } from "react-router"
 
 const ErrorPage = () => {
+  const error=useRouteError();
   return (
-    <div>ErrorPage</div>
+    <>
+      <h2>Oops.. Something went wrong. </h2>
+      <h3>{error.status} - {error.statusText}</h3>
+    </>
   )
 }
 

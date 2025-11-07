@@ -11,12 +11,12 @@ const Body = () => {
           Plan, manage, and complete tasks seamlessly.
         </p>
         <div className="flex justify-center gap-6 mt-8">
-          <Link to="/planning">
+          <Link to="/plan">
             <button className="px-6 py-3 bg-blue-500 rounded-3xl text-white font-semibold hover:bg-blue-600 transition-all">
               Start Planning
             </button>
           </Link>
-          <Link to="/tasks">
+          <Link to="/track">
             <button className="px-6 py-3 bg-white border-2 border-slate-200 text-blue-500 rounded-3xl font-semibold hover:bg-blue-500 hover:text-white transition-all">
               Today Plans
             </button>

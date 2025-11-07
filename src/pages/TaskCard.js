@@ -11,7 +11,8 @@ export default function TaskCard(props) {
   date = date.split("-").reverse().join("-");
   return (
     <>
-      <div className="w-4/5 m-2 p-2 border-2 border-slate-300 rounded-lg">
+      <div className="w-4/5 m-2 p-2 border-2 border-slate-300 rounded-lg transition-all duration-200 ease-in-out
+">
         <div>
           <div className="flex flex-col justify-center">
             <div className="flex justify-around">

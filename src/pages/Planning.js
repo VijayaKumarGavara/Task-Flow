@@ -1,4 +1,4 @@
-// React built in Components
+// React built in Hooks
 import { useContext, useState, useEffect } from "react";
 
 // Utility Functions
@@ -10,33 +10,48 @@ import PlanningForm from "./PlanningForm";
 import OverlapModel from "./Overlapmodel";
 import TaskCard from "./TaskCard";
 import TasksContext from "../utils/temp";
+import ToastContext from "../utils/temp2";
 const Planning = () => {
   const [isFormOpen, setFormOpen] = useState(false);
   const { taskList, setTaskList } = useContext(TasksContext);
-  // const [sortedTasks, setSortedTasks] = useState([]);
+  const { message, setMessage } = useContext(ToastContext);
+  const [showOverlapModal, setShowOverlapModal] = useState(false);
+  const [overlapData, setOverlapData] = useState([]);
+  const [editableTask, setEditableTask] = useState(null);
+  let sortedTasks = sortTasks(taskList);
+
   useEffect(() => {
     fetchTodayPlannedTasks();
   }, []);
   async function fetchTodayPlannedTasks() {
-    const today = new Date().toISOString().split("T")[0];
     try {
       const response = await fetch(
         `http://localhost:5000/api/tasks/?createdToday=true`
       );
-      if (!response.ok) throw new Error("Failed to fetch tasks");
+      if (!response.ok) {
+        const errText = await response.text();
+        showMessage(`Failed to fetch the task: ${errText}`, "error");
+        throw new Error(errText);
+      }
       const jsonData = await response.json();
+      if (jsonData.length === 0)
+        showMessage("No tasks found for today", "info");
+      else showMessage("Tasks fetched successfully", "success");
+      
       setTaskList(jsonData);
+      
     } catch (err) {
+      showMessage(`Error while fetching the data: ${err.message}`, "error");
       console.log("Error while fetching the data: ", err.message);
     }
   }
-  let sortedTasks = sortTasks(taskList);
 
-  const [showOverlapModal, setShowOverlapModal] = useState(false);
-  const [overlapData, setOverlapData] = useState([]);
-
-  const [editableTask, setEditableTask] = useState(null);
-
+  function showMessage(text, type = "info") {
+    setMessage({ text, type });
+    setTimeout(() => {
+      setMessage({ text: "", type: "" });
+    }, 2000);
+  }
   // To Close PlanningForm
   function handleCancel() {
     setFormOpen(false);
@@ -57,24 +72,28 @@ const Planning = () => {
       if (response.ok) {
         const updated = taskList.filter((t) => t.taskId != task.taskId);
         setTaskList(updated);
+        showMessage("Task deleted successfully", "success");
         // console.log("Task deleted successfully");
       } else {
+        const errText = await response.text();
+        showMessage(`Failed to delete the task: ${errText}`, "error");
+        throw new Error(errText);
         // console.log("Failed to delete task:", await await response.json());
       }
     } catch (error) {
       console.log("Error deleting task:", error);
+      showMessage(`Error deleting task: ${error.message}`, "error");
     }
     // setSortedTasks(sortTasks(updated));
   }
   async function handleSubmit(newTask) {
-    
     const overlapTasks = isOverlap(newTask, taskList);
 
     if (overlapTasks.length > 0) {
       setOverlapData([newTask, ...overlapTasks]);
       setShowOverlapModal(true);
       return;
-    } 
+    }
     if (editableTask) {
       try {
         const response = await fetch(
@@ -88,7 +107,11 @@ const Planning = () => {
           }
         );
 
-        if (!response.ok) throw new Error("Failed to update the task");
+        if (!response.ok) {
+          const errText = await response.text();
+          showMessage(`Failed to update the task: ${errText}`, "error");
+          throw new Error(errText);
+        }
 
         const updatedTask = await response.json();
 
@@ -100,15 +123,17 @@ const Planning = () => {
         setTaskList(updatedList);
         setEditableTask(null);
         setFormOpen(false);
+        showMessage(`Task updated successfully`, "success");
 
         // console.log("✅ Task updated successfully");
         return;
       } catch (error) {
+        showMessage(`Error while updating task: ${error.message}`, "error");
+
         console.log("Error while updating task:", error.message);
         return;
       }
-    }
-    else {
+    } else {
       try {
         const response = await fetch("http://localhost:5000/api/tasks", {
           method: "POST",
@@ -117,13 +142,19 @@ const Planning = () => {
           },
           body: JSON.stringify(newTask),
         });
-        if (!response.ok) throw new Error("Failed to add the task");
+        if (!response.ok) {
+          const errText = await response.text();
+          showMessage(`Failed to add the task: ${errText}`, "error");
+          throw new Error(errText);
+        }
         const savedTask = await response.json();
 
         setTaskList([...taskList, savedTask]);
+        showMessage(`Task added successfully`, "success");
         // console.log("New Task Added: ", newTask);
       } catch (error) {
         console.log("Error while adding task:", error.message);
+        showMessage(`Error while adding task: ${error.message}`, "error");
       }
     }
   }
@@ -195,12 +226,19 @@ const Planning = () => {
                 },
                 body: JSON.stringify(overlapData[0]),
               });
-              if (!response.ok) throw new Error("Failed to add the task");
+              if (!response.ok) {
+                const errText = await response.text();
+                showMessage(`Failed to add the task: ${errText}`, "error");
+                throw new Error(errText);
+              }
               const savedTask = await response.json();
 
               setTaskList([...taskList, savedTask]);
+              showMessage(`Task added successfully`, "success");
+
               //console.log("New Task Added: ", newTask);
             } catch (error) {
+              showMessage(`Error while adding task: ${error.message}`, "error");
               console.log("Error while adding task:", error.message);
             }
             //const updatedTasks = [...taskList, overlapData[0]];
@@ -215,6 +253,7 @@ const Planning = () => {
           }}
         />
       )}
+      
     </>
   );
 };
