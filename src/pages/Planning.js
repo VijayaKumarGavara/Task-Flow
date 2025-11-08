@@ -10,7 +10,7 @@ import PlanningForm from "./PlanningForm";
 import OverlapModel from "./Overlapmodel";
 import TaskCard from "./TaskCard";
 import TasksContext from "../utils/temp";
-import ToastContext from "../utils/temp2";
+import ToastContext from "../utils/toastContext";
 const Planning = () => {
   const [isFormOpen, setFormOpen] = useState(false);
   const { taskList, setTaskList } = useContext(TasksContext);
@@ -34,12 +34,10 @@ const Planning = () => {
         throw new Error(errText);
       }
       const jsonData = await response.json();
-      if (jsonData.length === 0)
-        showMessage("No tasks found for today", "info");
+      if (jsonData.length === 0) showMessage("No tasks planned yet", "info");
       else showMessage("Tasks fetched successfully", "success");
-      
+
       setTaskList(jsonData);
-      
     } catch (err) {
       showMessage(`Error while fetching the data: ${err.message}`, "error");
       console.log("Error while fetching the data: ", err.message);
@@ -253,7 +251,6 @@ const Planning = () => {
           }}
         />
       )}
-      
     </>
   );
 };

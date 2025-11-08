@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
 
 import TasksContext from "./utils/temp";
-import ToastContext from "./utils/temp2";
+import ToastContext from "./utils/toastContext";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -11,7 +11,6 @@ import ErrorPage from "./components/ErrorPage";
 
 import Planning from "./pages/Planning";
 import Track from "./pages/Track";
-import Insights from "./pages/Insights";
 import Insights from "./pages/Insights";
 function AppTemplate() {
   const [taskList, setTaskList] = useState([]);

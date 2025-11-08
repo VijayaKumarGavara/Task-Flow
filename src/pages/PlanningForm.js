@@ -18,6 +18,7 @@ export default function PlanningForm(props) {
       date: defaultDate,
       startTime: "",
       endTime: "",
+      isCompleted:false,
     }
   );
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function PlanningForm(props) {
       priority: "High",
       startTime: "",
       endTime: "",
+      isCompleted:false,
       date: defaultDate,
     });
     // console.log(task);

@@ -5,9 +5,9 @@ const uri = "mongodb://127.0.0.1:27017/PlannerDB"; // use 127.0.0.1 for consiste
 async function connectDB() {
   try {
     await mongoose.connect(uri);
-    console.log("✅ MongoDB connected successfully");
+    console.log("MongoDB connected successfully");
   } catch (error) {
-    console.error("❌ Error while connecting DB:", error.message);
+    console.error("Error while connecting DB:", error.message);
     process.exit(1); // Exit process if DB fails to connect
   }
 }
