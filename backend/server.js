@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import Task from "./Task.js";
 import connectDB from "./config.js";
-import generateId from "../src/utils/generateId.js";
 
 const app = express();
 app.use(express.json());
@@ -101,7 +100,7 @@ app.delete("/api/tasks/:taskId", async (req, res) => {
   const { taskId } = req.params;
   try {
     const result = await Task.deleteOne({ taskId });
-    console.log(result);
+    // console.log(result);
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "Task not found" });
     }

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const uri = "mongodb://127.0.0.1:27017/PlannerDB"; // use 127.0.0.1 for consistency
+const uri = "mongodb+srv://vijay:vijay2004@cluster0.semw3e7.mongodb.net/PlannerDB?retryWrites=true&w=majority" // ?appName=Cluster0 //"mongodb://127.0.0.1:27017/PlannerDB"; // use 127.0.0.1 for consistency
 
 async function connectDB() {
   try {
